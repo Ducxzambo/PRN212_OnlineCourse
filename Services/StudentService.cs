@@ -42,16 +42,14 @@ public class StudentService : IStudentService
         var student = await _studentRepository.GetByEmailAsync(email.Trim());
         if (student == null)
         {
-            student = new Student
+            var newStudent = new Student
             {
                 FullName = fullName.Trim(),
                 Email = email.Trim(),
                 Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
             };
-            await _studentRepository.AddAsync(student);
-
-            // AddAsync ran in its own DbContext, so re-fetch to get the generated Id.
-            student = await _studentRepository.GetByEmailAsync(email.Trim());
+            var newId = await _studentRepository.AddAsync(newStudent);
+            student = await _studentRepository.GetByIdAsync(newId);
             if (student == null)
                 return (false, "Không thể tạo học viên mới.");
         }

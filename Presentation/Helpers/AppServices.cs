@@ -23,4 +23,13 @@ public static class AppServices
 
     public static IRecommendationService RecommendationService { get; } =
         new RecommendationService(new CourseRepository(), new EnrollmentRepository());
+
+    public static IAccountService AccountService { get; } =
+        new AccountService(new AccountRepository(), new InstructorRepository(), new StudentRepository());
+
+    public static ICategoryService CategoryService { get; } =
+        new CategoryService(new CategoryRepository());
+
+    public static IStatisticsService StatisticsService { get; } =
+        new StatisticsService(new StatisticsRepository());
 }

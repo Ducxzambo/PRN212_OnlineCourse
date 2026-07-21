@@ -20,6 +20,9 @@ public class CourseService : ICourseService
     public Task<List<Category>> GetCategoriesAsync()
         => _categoryRepository.GetAllAsync();
 
+    public Task<List<Course>> GetCoursesByCategoryAsync(int categoryId)
+        => _courseRepository.GetByCategoryAsync(categoryId);
+
     public async Task<(bool Success, string? Error)> CreateCourseAsync(Course course)
     {
         var error = Validate(course);

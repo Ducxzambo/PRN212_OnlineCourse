@@ -19,10 +19,30 @@ public class StudentRepository : IStudentRepository
             .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower());
     }
 
-    public async Task AddAsync(Student student)
+    public async Task<int> AddAsync(Student student)
     {
         using var context = new OnlineCourseManagementDbContext();
         context.Students.Add(student);
         await context.SaveChangesAsync();
+        return student.Id;
+    }
+
+    public async Task UpdateAsync(Student student)
+    {
+        using var context = new OnlineCourseManagementDbContext();
+        var existing = await context.Students.FindAsync(student.Id);
+        if (existing == null) return;
+
+        existing.FullName = student.FullName;
+        existing.Email = student.Email;
+        existing.Phone = student.Phone;
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<int> GetEnrollmentCountAsync(int studentId)
+    {
+        using var context = new OnlineCourseManagementDbContext();
+        return await context.Enrollments.CountAsync(e => e.StudentId == studentId);
     }
 }

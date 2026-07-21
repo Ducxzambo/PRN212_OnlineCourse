@@ -1,5 +1,7 @@
 using System.Windows.Input;
+using DataAccess.Models;
 using Presentation.Helpers;
+using Services.Models;
 
 namespace Presentation.ViewModels;
 
@@ -22,7 +24,11 @@ public class LoginViewModel : ViewModelBase
 
     public ICommand LoginCommand { get; }
 
-    public event EventHandler? LoginSucceeded;
+    /// <summary>Raised when an Instructor account logs in successfully.</summary>
+    public event EventHandler? InstructorLoginSucceeded;
+
+    /// <summary>Raised when an Admin account logs in successfully.</summary>
+    public event EventHandler? AdminLoginSucceeded;
 
     public LoginViewModel()
     {
@@ -33,14 +39,32 @@ public class LoginViewModel : ViewModelBase
     {
         ErrorMessage = null;
 
-        var instructor = await AppServices.InstructorService.LoginAsync(Email);
+        var account = await AppServices.AccountService.LoginAsync(Email);
+        if (account == null)
+        {
+            ErrorMessage = "Không tìm thấy tài khoản với email này, hoặc tài khoản đã bị khóa.";
+            return;
+        }
+
+        if (account.Role == (int)AccountRole.Admin)
+        {
+            AdminSession.Current = account;
+            AdminLoginSucceeded?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        // Instructor role: keep using the existing InstructorSession/Instructors flow.
+        Instructor? instructor = account.InstructorId.HasValue
+            ? await AppServices.InstructorService.LoginAsync(account.Email)
+            : null;
+
         if (instructor == null)
         {
-            ErrorMessage = "Không tìm thấy Instructor với email này. Vui lòng kiểm tra lại.";
+            ErrorMessage = "Tài khoản Instructor này chưa được liên kết đúng. Vui lòng liên hệ Admin.";
             return;
         }
 
         InstructorSession.Current = instructor;
-        LoginSucceeded?.Invoke(this, EventArgs.Empty);
+        InstructorLoginSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }

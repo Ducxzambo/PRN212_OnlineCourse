@@ -41,6 +41,19 @@ public class CourseRepository : ICourseRepository
             .ToListAsync();
     }
 
+    public async Task<List<Course>> GetByCategoryAsync(int categoryId)
+    {
+        using var context = new OnlineCourseManagementDbContext();
+        return await context.Courses
+            .Include(c => c.Category)
+            .Include(c => c.Instructor)
+            .Include(c => c.Enrollments)
+            .Where(c => c.CategoryId == categoryId)
+            .OrderByDescending(c => c.CreatedDate)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task AddAsync(Course course)
     {
         using var context = new OnlineCourseManagementDbContext();

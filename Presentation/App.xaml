@@ -8,6 +8,7 @@
             <!-- Converters -->
             <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
             <helpers:EnrollmentStatusConverter x:Key="EnrollmentStatusConverter"/>
+            <helpers:AccountRoleConverter x:Key="AccountRoleConverter"/>
 
             <!-- Palette -->
             <Color x:Key="PrimaryColor">#2563EB</Color>

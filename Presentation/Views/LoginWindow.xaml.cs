@@ -10,10 +10,18 @@ namespace Presentation.Views
             InitializeComponent();
 
             var viewModel = new LoginViewModel();
-            viewModel.LoginSucceeded += (s, e) =>
+
+            viewModel.InstructorLoginSucceeded += (s, e) =>
             {
                 var mainWindow = new MainWindow();
                 mainWindow.Show();
+                Close();
+            };
+
+            viewModel.AdminLoginSucceeded += (s, e) =>
+            {
+                var adminWindow = new AdminMainWindow();
+                adminWindow.Show();
                 Close();
             };
 

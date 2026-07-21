@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -27,6 +27,9 @@ public partial class OnlineCourseManagementDbContext : DbContext
     public virtual DbSet<Lesson> Lessons { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
+
+    public virtual DbSet<Account> Accounts { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -110,6 +113,24 @@ public partial class OnlineCourseManagementDbContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(150);
             entity.Property(e => e.FullName).HasMaxLength(150);
             entity.Property(e => e.Phone).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<Account>(entity =>
+        {
+            entity.Property(e => e.FullName).HasMaxLength(150);
+            entity.Property(e => e.Email).HasMaxLength(150);
+
+            // Account -> Instructor: only populated when Role = Instructor.
+            entity.HasOne(d => d.Instructor).WithMany()
+                .HasForeignKey(d => d.InstructorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Accounts_Instructors");
+
+            // Account -> Student: only populated when Role = Student.
+            entity.HasOne(d => d.Student).WithMany()
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Accounts_Students");
         });
 
         OnModelCreatingPartial(modelBuilder);

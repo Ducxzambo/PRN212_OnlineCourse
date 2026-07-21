@@ -6,5 +6,7 @@ public interface IStudentRepository
 {
     Task<Student?> GetByIdAsync(int id);
     Task<Student?> GetByEmailAsync(string email);
-    Task AddAsync(Student student);
+    Task<int> AddAsync(Student student);
+    Task UpdateAsync(Student student);
+    Task<int> GetEnrollmentCountAsync(int studentId);
 }
