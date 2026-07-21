@@ -1,0 +1,68 @@
+<Window x:Class="Presentation.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Presentation.ViewModels"
+        xmlns:views="clr-namespace:Presentation.Views"
+        Title="Online Course Management - Instructor" Height="700" Width="1150"
+        WindowStartupLocation="CenterScreen"
+        MinHeight="560" MinWidth="900">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:CourseListViewModel}">
+            <views:CourseListView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LessonListViewModel}">
+            <views:LessonListView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StudentListViewModel}">
+            <views:StudentListView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RecommendationViewModel}">
+            <views:RecommendationView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="#0F172A">
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Top" Margin="20,24,20,24">
+                    <TextBlock Text="📚 OCM" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Instructor Workspace" FontSize="11" Foreground="#94A3B8" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Top" Margin="12,8,12,0">
+                    <Button Content="📘  Khóa học của tôi" Command="{Binding NavigateCoursesCommand}"
+                            HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0"
+                            Foreground="White" Padding="10,10" Margin="0,0,0,4" Cursor="Hand"/>
+                    <Button Content="👥  Học viên" Command="{Binding NavigateStudentsCommand}"
+                            HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0"
+                            Foreground="White" Padding="10,10" Margin="0,0,0,4" Cursor="Hand"/>
+                    <Button Content="✨  Đề xuất khóa học" Command="{Binding NavigateRecommendationCommand}"
+                            HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0"
+                            Foreground="White" Padding="10,10" Margin="0,0,0,4" Cursor="Hand"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Margin="20,0,20,20">
+                    <Separator Margin="0,0,0,12" Opacity="0.15"/>
+                    <TextBlock Text="{Binding InstructorName}" Foreground="White" FontWeight="SemiBold"/>
+                    <Button Content="Đăng xuất" Command="{Binding LogoutCommand}"
+                            Style="{StaticResource SecondaryButton}"
+                            Margin="0,10,0,0" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Content -->
+        <Border Grid.Column="1" Background="{StaticResource BackgroundBrush}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="24">
+                <ContentControl Content="{Binding CurrentViewModel}"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

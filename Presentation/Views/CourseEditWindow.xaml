@@ -1,0 +1,57 @@
+<Window x:Class="Presentation.Views.CourseEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding WindowTitle}" Height="520" Width="460"
+        MinHeight="360" MinWidth="380"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <TextBlock Text="{Binding WindowTitle}" Style="{StaticResource HeadingText}" Margin="0,0,0,16"/>
+
+                <TextBlock Text="Tên khóa học" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="34" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Mô tả" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                         Height="70" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Giá (USD)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged}" Height="34"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Thời lượng (giờ)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding DurationHours, UpdateSourceTrigger=PropertyChanged}" Height="34"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Danh mục" Style="{StaticResource FieldLabel}"/>
+                <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                          DisplayMemberPath="Name" Height="34" Margin="0,0,0,10"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Hủy" IsCancel="True" Style="{StaticResource SecondaryButton}"/>
+            <Button Content="Lưu" Command="{Binding SaveCommand}" IsDefault="True" MinWidth="90"/>
+        </StackPanel>
+    </Grid>
+</Window>

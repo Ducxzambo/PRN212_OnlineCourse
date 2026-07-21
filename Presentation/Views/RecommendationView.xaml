@@ -1,0 +1,78 @@
+<UserControl x:Class="Presentation.Views.RecommendationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Đề xuất khóa học" Style="{StaticResource HeadingText}"/>
+            <TextBlock Text="Gợi ý khóa học cho học viên dựa trên danh mục các khóa học họ đã tham gia"
+                       Style="{StaticResource SubHeadingText}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Học viên" Style="{StaticResource FieldLabel}"/>
+                <ComboBox ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent}"
+                          DisplayMemberPath="FullName" Width="240" Height="34"/>
+            </StackPanel>
+
+            <CheckBox Grid.Column="3" Content="Chỉ khóa học của tôi" IsChecked="{Binding OnlyMyCourses}"
+                      VerticalAlignment="Bottom" Margin="0,0,16,8"/>
+
+            <Button Grid.Column="4" Content="Gợi ý khóa học" Command="{Binding RecommendCommand}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="{Binding InfoMessage}" Style="{StaticResource InfoText}"
+                   Visibility="{Binding InfoMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <ItemsControl Grid.Row="3" ItemsSource="{Binding Recommendations}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1" Padding="16" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Course.Title}" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,0">
+                                    <Run Text="{Binding Course.Category.Name, Mode=OneWay}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding Course.Price, Mode=OneWay, StringFormat={}{0:N2} USD}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding EnrollmentCount, Mode=OneWay}"/>
+                                    <Run Text=" học viên đã đăng ký"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Reason}" Foreground="{StaticResource PrimaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="1" Content="Ghi danh học viên"
+                                    Command="{Binding DataContext.EnrollFromRecommendationCommand,
+                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
