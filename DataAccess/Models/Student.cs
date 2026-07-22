@@ -7,13 +7,14 @@ public partial class Student
 {
     public int Id { get; set; }
 
-    public string FullName { get; set; } = null!;
-
-    public string Email { get; set; } = null!;
+    public int AccountId { get; set; }
 
     public string? Phone { get; set; }
 
     public DateTime? DateOfBirth { get; set; }
 
+    public virtual Account Account { get; set; } = null!;
+
     public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 }
+

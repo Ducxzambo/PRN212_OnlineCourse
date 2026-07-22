@@ -18,4 +18,13 @@ public interface IStudentService
 
     /// <summary>Enrolls an already-known student (by Id) into a course - used by the recommendation screen.</summary>
     Task<(bool Success, string? Error)> EnrollExistingStudentAsync(int studentId, int courseId);
+
+    /// <summary>Get lessons for a course that the student is enrolled in.</summary>
+    Task<List<Lesson>> GetLessonsByCourseAsync(int courseId);
+
+    /// <summary>Get an individual lesson by Id.</summary>
+    Task<Lesson?> GetLessonByIdAsync(int lessonId);
+
+    /// <summary>Update progress for a student's enrollment.</summary>
+    Task<(bool Success, string? Error)> UpdateEnrollmentProgressAsync(int enrollmentId, decimal progress);
 }

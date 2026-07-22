@@ -22,12 +22,19 @@ public class AccountService : IAccountService
 
     public Task<List<Account>> GetAllAccountsAsync() => _accountRepository.GetAllAsync();
 
-    public async Task<Account?> LoginAsync(string email)
+    public async Task<Account?> LoginAsync(string username, string password)
     {
-        if (string.IsNullOrWhiteSpace(email)) return null;
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)) 
+            return null;
 
-        var account = await _accountRepository.GetByEmailAsync(email.Trim());
-        if (account == null || !account.IsActive) return null;
+        // Try to find account by username (email)
+        var account = await _accountRepository.GetByEmailAsync(username.Trim());
+        if (account == null || !account.IsActive) 
+            return null;
+
+        // Validate password
+        if (account.Password != password)
+            return null;
 
         return account;
     }
@@ -41,39 +48,43 @@ public class AccountService : IAccountService
         if (existing != null)
             return (false, "Email này đã được sử dụng cho một tài khoản khác.");
 
-        int? instructorId = null;
-        int? studentId = null;
-
-        if (role == AccountRole.Instructor)
-        {
-            instructorId = await _instructorRepository.AddAsync(new Instructor
-            {
-                FullName = fullName.Trim(),
-                Email = email.Trim(),
-                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
-            });
-        }
-        else if (role == AccountRole.Student)
-        {
-            studentId = await _studentRepository.AddAsync(new Student
-            {
-                FullName = fullName.Trim(),
-                Email = email.Trim(),
-                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
-            });
-        }
-
         var account = new Account
         {
             FullName = fullName.Trim(),
             Email = email.Trim(),
+            Password = email.Trim(), // Default password is email
             Role = (int)role,
             IsActive = true,
-            InstructorId = instructorId,
-            StudentId = studentId
+            CreatedDate = DateTime.Now
         };
 
         await _accountRepository.AddAsync(account);
+
+        // Reload to get the ID
+        account = await _accountRepository.GetByEmailAsync(email.Trim());
+        if (account == null)
+            return (false, "Không thể tạo tài khoản.");
+
+        // Create linked Instructor or Student record
+        if (role == AccountRole.Instructor)
+        {
+            var instructor = new Instructor
+            {
+                AccountId = account.Id,
+                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
+            };
+            await _instructorRepository.AddAsync(instructor);
+        }
+        else if (role == AccountRole.Student)
+        {
+            var student = new Student
+            {
+                AccountId = account.Id,
+                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
+            };
+            await _studentRepository.AddAsync(student);
+        }
+
         return (true, null);
     }
 
@@ -97,30 +108,17 @@ public class AccountService : IAccountService
         account.IsActive = isActive;
         await _accountRepository.UpdateAsync(account);
 
-        // Keep the linked Instructor row (login identity used across Courses) in sync.
-        if (account.InstructorId.HasValue)
+        // Update related Instructor or Student record
+        if (account.Role == (int)AccountRole.Instructor && account.Instructor != null)
         {
-            var instructor = await _instructorRepository.GetByIdAsync(account.InstructorId.Value);
-            if (instructor != null)
-            {
-                instructor.FullName = fullName.Trim();
-                instructor.Email = email.Trim();
-                instructor.Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
-                await _instructorRepository.UpdateAsync(instructor);
-            }
+            account.Instructor.Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+            await _instructorRepository.UpdateAsync(account.Instructor);
         }
 
-        // Keep the linked Student row (enrollment identity) in sync.
-        if (account.StudentId.HasValue)
+        if (account.Role == (int)AccountRole.Student && account.Student != null)
         {
-            var student = await _studentRepository.GetByIdAsync(account.StudentId.Value);
-            if (student != null)
-            {
-                student.FullName = fullName.Trim();
-                student.Email = email.Trim();
-                student.Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
-                await _studentRepository.UpdateAsync(student);
-            }
+            account.Student.Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+            await _studentRepository.UpdateAsync(account.Student);
         }
 
         return (true, null);
@@ -134,23 +132,22 @@ public class AccountService : IAccountService
         if (account.Role == (int)AccountRole.Admin)
             return (false, "Không được phép xóa tài khoản Admin.");
 
-        if (account.InstructorId.HasValue)
+        // Check if instructor has courses
+        if (account.Role == (int)AccountRole.Instructor && account.Instructor != null)
         {
-            var courseCount = await _instructorRepository.GetCourseCountAsync(account.InstructorId.Value);
+            var courseCount = await _instructorRepository.GetCourseCountAsync(account.Instructor.Id);
             if (courseCount > 0)
                 return (false, "Không thể xóa Instructor còn đang phụ trách khóa học. Hãy chuyển/xóa khóa học trước.");
 
-            await _instructorRepository.DeleteAsync(account.InstructorId.Value);
+            await _instructorRepository.DeleteAsync(account.Instructor.Id);
         }
 
-        if (account.StudentId.HasValue)
+        // Check if student has enrollments
+        if (account.Role == (int)AccountRole.Student && account.Student != null)
         {
-            var enrollmentCount = await _studentRepository.GetEnrollmentCountAsync(account.StudentId.Value);
+            var enrollmentCount = await _studentRepository.GetEnrollmentCountAsync(account.Student.Id);
             if (enrollmentCount > 0)
                 return (false, "Không thể xóa Student còn đang có lượt đăng ký khóa học. Hãy xử lý đăng ký trước.");
-
-            // No delete method for a lone Student row is exposed on purpose - Students may still
-            // be referenced historically. Only the Account (login) is removed in that case.
         }
 
         await _accountRepository.DeleteAsync(accountId);

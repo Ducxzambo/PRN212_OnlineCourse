@@ -16,7 +16,8 @@ public class StudentRepository : IStudentRepository
         using var context = new OnlineCourseManagementDbContext();
         return await context.Students
             .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower());
+            .Include(s => s.Account)
+            .FirstOrDefaultAsync(s => s.Account.Email.ToLower() == email.ToLower());
     }
 
     public async Task<int> AddAsync(Student student)
@@ -33,8 +34,6 @@ public class StudentRepository : IStudentRepository
         var existing = await context.Students.FindAsync(student.Id);
         if (existing == null) return;
 
-        existing.FullName = student.FullName;
-        existing.Email = student.Email;
         existing.Phone = student.Phone;
 
         await context.SaveChangesAsync();
@@ -44,5 +43,19 @@ public class StudentRepository : IStudentRepository
     {
         using var context = new OnlineCourseManagementDbContext();
         return await context.Enrollments.CountAsync(e => e.StudentId == studentId);
+    }
+
+    public async Task<Student?> GetByIdWithEnrollmentsAsync(int id)
+    {
+        using var context = new OnlineCourseManagementDbContext();
+        return await context.Students
+            .Include(s => s.Enrollments)
+                .ThenInclude(e => e.Course)
+                    .ThenInclude(c => c.Instructor)
+            .Include(s => s.Enrollments)
+                .ThenInclude(e => e.Course)
+                    .ThenInclude(c => c.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id);
     }
 }

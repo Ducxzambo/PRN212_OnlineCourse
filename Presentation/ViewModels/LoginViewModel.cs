@@ -7,13 +7,20 @@ namespace Presentation.ViewModels;
 
 public class LoginViewModel : ViewModelBase
 {
-    private string _email = "";
+    private string _username = "";
+    private string _password = "";
     private string? _errorMessage;
 
-    public string Email
+    public string Username
     {
-        get => _email;
-        set => SetProperty(ref _email, value);
+        get => _username;
+        set => SetProperty(ref _username, value);
+    }
+
+    public string Password
+    {
+        get => _password;
+        set => SetProperty(ref _password, value);
     }
 
     public string? ErrorMessage
@@ -30,6 +37,9 @@ public class LoginViewModel : ViewModelBase
     /// <summary>Raised when an Admin account logs in successfully.</summary>
     public event EventHandler? AdminLoginSucceeded;
 
+    /// <summary>Raised when a Student account logs in successfully.</summary>
+    public event EventHandler? StudentLoginSucceeded;
+
     public LoginViewModel()
     {
         LoginCommand = new AsyncRelayCommand(LoginAsync);
@@ -39,10 +49,22 @@ public class LoginViewModel : ViewModelBase
     {
         ErrorMessage = null;
 
-        var account = await AppServices.AccountService.LoginAsync(Email);
+        if (string.IsNullOrWhiteSpace(Username))
+        {
+            ErrorMessage = "Vui lòng nhập tên tài khoản hoặc email.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Vui lòng nhập mật khẩu.";
+            return;
+        }
+
+        var account = await AppServices.AccountService.LoginAsync(Username, Password);
         if (account == null)
         {
-            ErrorMessage = "Không tìm thấy tài khoản với email này, hoặc tài khoản đã bị khóa.";
+            ErrorMessage = "Tên tài khoản/email hoặc mật khẩu không chính xác, hoặc tài khoản đã bị khóa.";
             return;
         }
 
@@ -53,10 +75,24 @@ public class LoginViewModel : ViewModelBase
             return;
         }
 
+        // Check if it's a Student account
+        if (account.Role == (int)AccountRole.Student)
+        {
+            if (account.Student == null)
+            {
+                ErrorMessage = "Tài khoản Student này chưa được liên kết đúng. Vui lòng liên hệ Admin.";
+                return;
+            }
+
+            StudentSession.Current = account.Student;
+            StudentSession.CurrentAccount = account;
+            StudentLoginSucceeded?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
         // Instructor role: keep using the existing InstructorSession/Instructors flow.
-        Instructor? instructor = account.InstructorId.HasValue
-            ? await AppServices.InstructorService.LoginAsync(account.Email)
-            : null;
+        Instructor? instructor = account.Instructor ?? 
+            (account.Email != null ? await AppServices.InstructorService.LoginAsync(account.Email) : null);
 
         if (instructor == null)
         {
@@ -68,3 +104,4 @@ public class LoginViewModel : ViewModelBase
         InstructorLoginSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }
+

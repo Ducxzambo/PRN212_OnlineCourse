@@ -1,16 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DataAccess.Models;
 
-/// <summary>
-/// Login/role record. Role: 0 = Instructor, 1 = Admin, 2 = Student.
-/// When Role = Instructor, InstructorId points to the matching Instructors row
-/// (created together by AccountService so Courses.InstructorId keeps working).
-/// When Role = Student, StudentId points to the matching Students row
-/// (created together by AccountService so Enrollments.StudentId keeps working).
-/// When Role = Admin, both InstructorId and StudentId are null.
-/// </summary>
 public partial class Account
 {
     public int Id { get; set; }
@@ -19,13 +11,13 @@ public partial class Account
 
     public string Email { get; set; } = null!;
 
+    public string Password { get; set; } = null!;
+
     public int Role { get; set; }
 
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
-    public int? InstructorId { get; set; }
-
-    public int? StudentId { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public virtual Instructor? Instructor { get; set; }
 

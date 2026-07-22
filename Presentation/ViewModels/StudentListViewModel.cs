@@ -129,8 +129,8 @@ public class StudentListViewModel : ViewModelBase
 
         if (!string.IsNullOrWhiteSpace(SearchText))
             filtered = filtered.Where(e =>
-                e.Student.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                e.Student.Email.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                e.Student.Account.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                e.Student.Account.Email.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
         Enrollments.Clear();
         foreach (var enrollment in filtered) Enrollments.Add(enrollment);
@@ -155,7 +155,7 @@ public class StudentListViewModel : ViewModelBase
         if (SelectedEnrollment == null) return;
 
         var confirm = MessageBox.Show(
-            $"Xóa đăng ký của '{SelectedEnrollment.Student.FullName}' khỏi khóa học '{SelectedEnrollment.Course.Title}'?",
+            $"Xóa đăng ký của '{SelectedEnrollment.Student.Account.FullName}' khỏi khóa học '{SelectedEnrollment.Course.Title}'?",
             "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (confirm != MessageBoxResult.Yes) return;
 

@@ -65,6 +65,17 @@ public class EnrollmentRepository : IEnrollmentRepository
         return true;
     }
 
+    public async Task<bool> UpdateProgressAsync(int enrollmentId, decimal progress)
+    {
+        using var context = new OnlineCourseManagementDbContext();
+        var enrollment = await context.Enrollments.FindAsync(enrollmentId);
+        if (enrollment == null) return false;
+
+        enrollment.Progress = progress;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task DeleteAsync(int id)
     {
         using var context = new OnlineCourseManagementDbContext();

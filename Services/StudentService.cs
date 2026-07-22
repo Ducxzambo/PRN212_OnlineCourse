@@ -7,11 +7,16 @@ public class StudentService : IStudentService
 {
     private readonly IEnrollmentRepository _enrollmentRepository;
     private readonly IStudentRepository _studentRepository;
+    private readonly ILessonRepository _lessonRepository;
 
-    public StudentService(IEnrollmentRepository enrollmentRepository, IStudentRepository studentRepository)
+    public StudentService(
+        IEnrollmentRepository enrollmentRepository,
+        IStudentRepository studentRepository,
+        ILessonRepository lessonRepository)
     {
         _enrollmentRepository = enrollmentRepository;
         _studentRepository = studentRepository;
+        _lessonRepository = lessonRepository;
     }
 
     public Task<List<Enrollment>> GetRosterByInstructorAsync(int instructorId)
@@ -44,8 +49,6 @@ public class StudentService : IStudentService
         {
             var newStudent = new Student
             {
-                FullName = fullName.Trim(),
-                Email = email.Trim(),
                 Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim()
             };
             var newId = await _studentRepository.AddAsync(newStudent);
@@ -74,4 +77,25 @@ public class StudentService : IStudentService
         await _enrollmentRepository.AddAsync(enrollment);
         return (true, null);
     }
+
+    public Task<List<Lesson>> GetLessonsByCourseAsync(int courseId)
+        => _lessonRepository.GetByCourseAsync(courseId);
+
+    public Task<Lesson?> GetLessonByIdAsync(int lessonId)
+        => _lessonRepository.GetByIdAsync(lessonId);
+
+    public async Task<(bool Success, string? Error)> UpdateEnrollmentProgressAsync(int enrollmentId, decimal progress)
+    {
+        if (progress < 0 || progress > 100)
+            return (false, "Tiến độ phải là giá trị từ 0 đến 100.");
+
+        var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
+        if (enrollment == null)
+            return (false, "Không tìm thấy lượt đăng ký.");
+
+        enrollment.Progress = progress;
+        var ok = await _enrollmentRepository.UpdateProgressAsync(enrollmentId, progress);
+        return ok ? (true, null) : (false, "Không thể cập nhật tiến độ.");
+    }
 }
+

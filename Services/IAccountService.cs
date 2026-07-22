@@ -7,8 +7,8 @@ public interface IAccountService
 {
     Task<List<Account>> GetAllAccountsAsync();
 
-    /// <summary>Looks up an active Account by email. Returns null if not found or inactive (no password in this schema).</summary>
-    Task<Account?> LoginAsync(string email);
+    /// <summary>Looks up an active Account by username/email and validates the password. Returns null if not found, inactive, or password is incorrect.</summary>
+    Task<Account?> LoginAsync(string username, string password);
 
     /// <summary>
     /// Creates an Account. If role = Instructor, also creates the linked Instructors row.

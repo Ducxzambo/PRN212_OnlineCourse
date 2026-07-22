@@ -25,7 +25,23 @@ namespace Presentation.Views
                 Close();
             };
 
+            viewModel.StudentLoginSucceeded += (s, e) =>
+            {
+                var studentWindow = new StudentMainWindow();
+                studentWindow.Show();
+                Close();
+            };
+
             DataContext = viewModel;
+
+            // Bind PasswordBox to ViewModel (PasswordBox doesn't support direct binding for security reasons)
+            PasswordBox.PasswordChanged += (s, e) =>
+            {
+                if (viewModel != null)
+                {
+                    viewModel.Password = PasswordBox.Password;
+                }
+            };
         }
     }
 }

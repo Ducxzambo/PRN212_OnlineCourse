@@ -14,6 +14,7 @@ public interface IEnrollmentRepository
     Task<bool> ExistsAsync(int studentId, int courseId);
     Task AddAsync(Enrollment enrollment);
     Task<bool> UpdateStatusAsync(int enrollmentId, int newStatus);
+    Task<bool> UpdateProgressAsync(int enrollmentId, decimal progress);
     Task DeleteAsync(int id);
 
     /// <summary>Number of enrollments per course, used to rank courses by popularity.</summary>

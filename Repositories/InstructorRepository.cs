@@ -10,7 +10,8 @@ public class InstructorRepository : IInstructorRepository
         using var context = new OnlineCourseManagementDbContext();
         return await context.Instructors
             .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Email.ToLower() == email.ToLower());
+            .Include(i => i.Account)
+            .FirstOrDefaultAsync(i => i.Account.Email.ToLower() == email.ToLower());
     }
 
     public async Task<Instructor?> GetByIdAsync(int id)
@@ -22,7 +23,11 @@ public class InstructorRepository : IInstructorRepository
     public async Task<List<Instructor>> GetAllAsync()
     {
         using var context = new OnlineCourseManagementDbContext();
-        return await context.Instructors.AsNoTracking().OrderBy(i => i.FullName).ToListAsync();
+        return await context.Instructors
+            .AsNoTracking()
+            .Include(i => i.Account)
+            .OrderBy(i => i.Account.FullName)
+            .ToListAsync();
     }
 
     public async Task<int> GetCourseCountAsync(int instructorId)
@@ -45,8 +50,6 @@ public class InstructorRepository : IInstructorRepository
         var existing = await context.Instructors.FindAsync(instructor.Id);
         if (existing == null) return;
 
-        existing.FullName = instructor.FullName;
-        existing.Email = instructor.Email;
         existing.Phone = instructor.Phone;
 
         await context.SaveChangesAsync();

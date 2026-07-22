@@ -18,7 +18,7 @@ public class MainViewModel : ViewModelBase
         set => SetProperty(ref _currentViewModel, value);
     }
 
-    public string InstructorName => InstructorSession.Current?.FullName ?? "";
+    public string InstructorName => AccountSession.Current?.FullName ?? "";
 
     public ICommand NavigateCoursesCommand { get; }
     public ICommand NavigateStudentsCommand { get; }

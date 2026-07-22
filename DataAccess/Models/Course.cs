@@ -21,6 +21,10 @@ public partial class Course
 
     public int InstructorId { get; set; }
 
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
+
     public virtual Category Category { get; set; } = null!;
 
     public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();

@@ -9,4 +9,7 @@ public interface IStudentRepository
     Task<int> AddAsync(Student student);
     Task UpdateAsync(Student student);
     Task<int> GetEnrollmentCountAsync(int studentId);
+
+    /// <summary>Get student with enrollments and course details loaded.</summary>
+    Task<Student?> GetByIdWithEnrollmentsAsync(int id);
 }

@@ -54,7 +54,7 @@ public class RecommendationViewModel : ViewModelBase
             .Select(e => e.Student)
             .GroupBy(s => s.Id)
             .Select(g => g.First())
-            .OrderBy(s => s.FullName)
+            .OrderBy(s => s.Id)
             .ToList();
 
         Students.Clear();

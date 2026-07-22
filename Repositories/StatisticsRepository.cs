@@ -35,10 +35,11 @@ public class StatisticsRepository : IStatisticsRepository
 
         stats.TopCoursesByEnrollment = await context.Courses
             .Include(c => c.Instructor)
+            .ThenInclude(i => i.Account)
             .Select(c => new TopCourseStat
             {
                 CourseTitle = c.Title,
-                InstructorName = c.Instructor.FullName,
+                InstructorName = c.Instructor.Account.FullName,
                 EnrollmentCount = c.Enrollments.Count
             })
             .OrderByDescending(x => x.EnrollmentCount)
