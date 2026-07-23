@@ -1,12 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Window x:Class="Presentation.Views.StudentMainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Student Workspace" Height="700" Width="1050" WindowStartupLocation="CenterScreen">
   <Grid Margin="24">
-    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Student Workspace" Style="{StaticResource HeadingText}"/><StackPanel Grid.Column="1" Orientation="Horizontal"><Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}"/><Button Content="Hồ sơ" Command="{Binding OpenProfileCommand}" Style="{StaticResource SecondaryButton}"/><Button Content="Đăng xuất" Command="{Binding LogoutCommand}" Style="{StaticResource SecondaryButton}"/></StackPanel></Grid>
-    <Grid Grid.Row="1" Margin="0,16,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <GroupBox Header="Available courses"><StackPanel><DataGrid ItemsSource="{Binding Courses}" SelectedItem="{Binding SelectedCourse}" Height="190"><DataGrid.Columns><DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/><DataGridTextColumn Header="Price" Binding="{Binding Price}"/></DataGrid.Columns></DataGrid><Button Content="Enroll selected course" Command="{Binding EnrollCommand}" HorizontalAlignment="Left"/></StackPanel></GroupBox>
-      <GroupBox Grid.Column="1" Header="My courses"><DataGrid ItemsSource="{Binding MyEnrollments}" SelectedItem="{Binding SelectedEnrollment}"><DataGrid.Columns><DataGridTextColumn Header="Course" Binding="{Binding Course.Title}" Width="*"/><DataGridTemplateColumn Header="Progress" Width="130"><DataGridTemplateColumn.CellTemplate><DataTemplate><Grid Margin="4,0"><ProgressBar Value="{Binding Progress}" Maximum="100" Height="16"/><TextBlock Text="{Binding Progress, StringFormat={}{0:N0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/></Grid></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn><DataGridTextColumn Header="Status" Binding="{Binding Status, Converter={StaticResource EnrollmentStatusConverter}}"/></DataGrid.Columns></DataGrid></GroupBox>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Student Workspace" Style="{StaticResource HeadingText}"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}"/>
+            <Button Content="Hồ sơ" Command="{Binding OpenProfileCommand}" Style="{StaticResource SecondaryButton}"/>
+            <Button Content="Đăng xuất" Command="{Binding LogoutCommand}" Style="{StaticResource SecondaryButton}"/>
+        </StackPanel>
     </Grid>
-    <GroupBox Grid.Row="2" Header="Lessons"><StackPanel><DataGrid ItemsSource="{Binding Lessons}" SelectedItem="{Binding SelectedLesson}" Height="180"><DataGrid.Columns><DataGridTextColumn Header="#" Binding="{Binding Lesson.OrderIndex}"/><DataGridTextColumn Header="Title" Binding="{Binding Lesson.Title}" Width="*"/><DataGridTextColumn Header="Content" Binding="{Binding Lesson.Content}" Width="2*"/><DataGridTextColumn Header="Status" Binding="{Binding CompletionStatus}" Width="140"/></DataGrid.Columns></DataGrid><Button Content="Cập nhật trạng thái bài học" Command="{Binding CompleteLessonCommand}" HorizontalAlignment="Left"/></StackPanel></GroupBox>
+    <Grid Grid.Row="1" Margin="0,16,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+      <GroupBox Header="Available courses">
+          <StackPanel>
+              <DataGrid ItemsSource="{Binding Courses}" SelectedItem="{Binding SelectedCourse}" Height="190">
+                  <DataGrid.Columns>
+                      <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                      <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
+                  </DataGrid.Columns>
+              </DataGrid>
+              <Button Content="Enroll selected course" Command="{Binding EnrollCommand}" HorizontalAlignment="Left"/>
+          </StackPanel>
+      </GroupBox>
+      <GroupBox Grid.Column="1" Header="My courses">
+          <DataGrid ItemsSource="{Binding MyEnrollments}" SelectedItem="{Binding SelectedEnrollment}">
+              <DataGrid.Columns>
+                  <DataGridTextColumn Header="Course" Binding="{Binding Course.Title}" Width="*"/>
+                  <DataGridTemplateColumn Header="Progress" Width="130">
+                      <DataGridTemplateColumn.CellTemplate>
+                          <DataTemplate><Grid Margin="4,0">
+                              <ProgressBar Value="{Binding Progress}" Maximum="100" Height="16"/>
+                              <TextBlock Text="{Binding Progress, StringFormat={}{0:N0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                          </Grid>
+                          </DataTemplate>
+                      </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Status" Binding="{Binding Status, Converter={StaticResource EnrollmentStatusConverter}}"/>
+              </DataGrid.Columns>
+          </DataGrid>
+      </GroupBox>
+    </Grid>
+    <GroupBox Grid.Row="2" Header="Lessons">
+        <StackPanel>
+            <DataGrid ItemsSource="{Binding Lessons}" SelectedItem="{Binding SelectedLesson}" Height="180">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding Lesson.OrderIndex}"/>
+                    <DataGridTextColumn Header="Title" Binding="{Binding Lesson.Title}" Width="*"/>
+                    <DataGridTextColumn Header="Content" Binding="{Binding Lesson.Content}" Width="2*"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding CompletionStatus}" Width="140"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Content="Cập nhật trạng thái bài học" Command="{Binding CompleteLessonCommand}" HorizontalAlignment="Left"/>
+        </StackPanel>
+    </GroupBox>
   </Grid>
 </Window>
