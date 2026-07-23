@@ -1,4 +1,4 @@
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Presentation.Helpers;
 
@@ -7,3 +7,4 @@ public static class AdminSession
 {
     public static Account? Current { get; set; }
 }
+

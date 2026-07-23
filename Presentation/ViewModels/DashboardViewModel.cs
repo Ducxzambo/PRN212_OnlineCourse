@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Presentation.Helpers;
 using Repositories.Models;
@@ -22,17 +22,24 @@ public class DashboardViewModel : ViewModelBase
 
     public DashboardViewModel()
     {
-        RefreshCommand = new AsyncRelayCommand(LoadAsync);
+        RefreshCommand = new RelayCommand(Load);
     }
 
-    public async Task LoadAsync()
+    public  void Load()
     {
-        Stats = await AppServices.StatisticsService.GetDashboardStatisticsAsync();
+        Stats = AppServices.StatisticsService.GetDashboardStatistics();
 
         CoursesByCategory.Clear();
-        foreach (var item in Stats.CoursesByCategory) CoursesByCategory.Add(item);
+        foreach (var item in Stats.CoursesByCategory)
+        {
+            CoursesByCategory.Add(item);
+        }
 
         TopCourses.Clear();
-        foreach (var item in Stats.TopCoursesByEnrollment) TopCourses.Add(item);
+        foreach (var item in Stats.TopCoursesByEnrollment)
+        {
+            TopCourses.Add(item);
+        }
     }
 }
+

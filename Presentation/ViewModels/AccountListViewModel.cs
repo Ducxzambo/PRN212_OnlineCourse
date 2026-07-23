@@ -48,16 +48,16 @@ public class AccountListViewModel : ViewModelBase
     {
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, () => CanModifySelected);
-        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => CanModifySelected);
-        RefreshCommand = new AsyncRelayCommand(LoadAsync);
+        DeleteCommand = new RelayCommand(Delete, () => CanModifySelected);
+        RefreshCommand = new RelayCommand(Load);
         ViewDetailsCommand = new RelayCommand(ViewDetails, () => SelectedAccount != null);
     }
 
-    public async Task LoadAsync()
+    public  void Load()
     {
         var previousSelectedId = SelectedAccount?.Id;
 
-        _allAccounts = await AppServices.AccountService.GetAllAccountsAsync();
+        _allAccounts = AppServices.AccountService.GetAllAccounts();
         ApplyFilter();
 
         if (previousSelectedId.HasValue)
@@ -100,7 +100,7 @@ public class AccountListViewModel : ViewModelBase
     private void Add()
     {
         var window = new AccountEditWindow(new AccountEditViewModel(null));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
     private void Edit()
@@ -113,10 +113,10 @@ public class AccountListViewModel : ViewModelBase
         }
 
         var window = new AccountEditWindow(new AccountEditViewModel(SelectedAccount));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
-    private async Task DeleteAsync()
+    private  void Delete()
     {
         if (SelectedAccount == null) return;
         if (SelectedAccount.Role == (int)AccountRole.Admin)
@@ -128,16 +128,17 @@ public class AccountListViewModel : ViewModelBase
         var confirm = MessageBox.Show(
             $"Xóa tài khoản '{SelectedAccount.FullName}'?", "Xác nhận xóa",
             MessageBoxButton.YesNo, MessageBoxImage.Question);
+
         if (confirm != MessageBoxResult.Yes) return;
 
-        var (success, error) = await AppServices.AccountService.DeleteAccountAsync(SelectedAccount.Id);
+        var (success, error) = AppServices.AccountService.DeleteAccount(SelectedAccount.Id);
         if (!success)
         {
             MessageBox.Show(error, "Không thể xóa", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        await LoadAsync();
+        Load();
     }
 
     private void ViewDetails()
@@ -160,3 +161,4 @@ public class AccountListViewModel : ViewModelBase
         }
     }
 }
+

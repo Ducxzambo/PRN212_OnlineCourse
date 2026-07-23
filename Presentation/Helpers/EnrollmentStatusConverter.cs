@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace Presentation.Helpers;
@@ -18,3 +18,4 @@ public class EnrollmentStatusConverter : IValueConverter
         throw new NotSupportedException();
     }
 }
+

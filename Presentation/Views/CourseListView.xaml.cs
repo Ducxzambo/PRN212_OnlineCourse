@@ -1,4 +1,4 @@
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Presentation.Views
 {
@@ -10,3 +10,4 @@ namespace Presentation.Views
         }
     }
 }
+

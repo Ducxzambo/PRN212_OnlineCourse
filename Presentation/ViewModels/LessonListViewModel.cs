@@ -35,17 +35,17 @@ public class LessonListViewModel : ViewModelBase
 
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, () => SelectedLesson != null);
-        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => SelectedLesson != null);
-        MoveUpCommand = new AsyncRelayCommand(MoveUpAsync, () => SelectedLesson != null);
-        MoveDownCommand = new AsyncRelayCommand(MoveDownAsync, () => SelectedLesson != null);
+        DeleteCommand = new RelayCommand(Delete, () => SelectedLesson != null);
+        MoveUpCommand = new RelayCommand(MoveUp, () => SelectedLesson != null);
+        MoveDownCommand = new RelayCommand(MoveDown, () => SelectedLesson != null);
         BackCommand = new RelayCommand(_onBack);
     }
 
-    public async Task LoadAsync()
+    public  void Load()
     {
         var previousSelectedId = SelectedLesson?.Id;
 
-        var lessons = await AppServices.LessonService.GetLessonsByCourseAsync(Course.Id);
+        var lessons = AppServices.LessonService.GetLessonsByCourse(Course.Id);
         Lessons.Clear();
         foreach (var lesson in lessons) Lessons.Add(lesson);
 
@@ -56,7 +56,7 @@ public class LessonListViewModel : ViewModelBase
     private void Add()
     {
         var window = new LessonEditWindow(new LessonEditViewModel(Course.Id, null));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
     private void Edit()
@@ -64,10 +64,10 @@ public class LessonListViewModel : ViewModelBase
         if (SelectedLesson == null) return;
 
         var window = new LessonEditWindow(new LessonEditViewModel(Course.Id, SelectedLesson));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
-    private async Task DeleteAsync()
+    private  void Delete()
     {
         if (SelectedLesson == null) return;
 
@@ -76,25 +76,26 @@ public class LessonListViewModel : ViewModelBase
             MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (confirm != MessageBoxResult.Yes) return;
 
-        await AppServices.LessonService.DeleteLessonAsync(SelectedLesson.Id);
-        await LoadAsync();
+        AppServices.LessonService.DeleteLesson(SelectedLesson.Id);
+        Load();
     }
 
-    private async Task MoveUpAsync()
+    private  void MoveUp()
     {
         if (SelectedLesson == null) return;
         var id = SelectedLesson.Id;
-        await AppServices.LessonService.MoveLessonUpAsync(id, Course.Id);
-        await LoadAsync();
+        AppServices.LessonService.MoveLessonUp(id, Course.Id);
+        Load();
         SelectedLesson = Lessons.FirstOrDefault(l => l.Id == id);
     }
 
-    private async Task MoveDownAsync()
+    private  void MoveDown()
     {
         if (SelectedLesson == null) return;
         var id = SelectedLesson.Id;
-        await AppServices.LessonService.MoveLessonDownAsync(id, Course.Id);
-        await LoadAsync();
+        AppServices.LessonService.MoveLessonDown(id, Course.Id);
+        Load();
         SelectedLesson = Lessons.FirstOrDefault(l => l.Id == id);
     }
 }
+

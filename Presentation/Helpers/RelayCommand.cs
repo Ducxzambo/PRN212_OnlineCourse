@@ -1,4 +1,4 @@
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace Presentation.Helpers;
 
@@ -31,3 +31,4 @@ public class RelayCommand : ICommand
 
     public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
 }
+

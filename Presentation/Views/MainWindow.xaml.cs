@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using Presentation.ViewModels;
 
 namespace Presentation.Views
@@ -16,8 +16,14 @@ namespace Presentation.Views
                 loginWindow.Show();
                 Close();
             };
+            viewModel.ProfileRequested += (_, _) =>
+            {
+                if (Presentation.Helpers.InstructorSession.Current?.Account != null)
+                    new ProfileWindow(new ProfileViewModel(Presentation.Helpers.InstructorSession.Current.Account)).ShowDialog();
+            };
 
             DataContext = viewModel;
         }
     }
 }
+

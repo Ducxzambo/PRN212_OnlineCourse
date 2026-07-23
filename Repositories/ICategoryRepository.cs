@@ -1,14 +1,15 @@
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Repositories;
 
 public interface ICategoryRepository
 {
-    Task<List<Category>> GetAllAsync();
-    Task<Category?> GetByIdAsync(int id);
-    Task<bool> ExistsByNameAsync(string name, int? excludeId = null);
-    Task<int> GetCourseCountAsync(int categoryId);
-    Task AddAsync(Category category);
-    Task UpdateAsync(Category category);
-    Task DeleteAsync(int id);
+    List<Category> GetAll();
+    Category? GetById(int id);
+    bool ExistsByName(string name, int? excludeId = null);
+    int GetCourseCount(int categoryId);
+    void Add(Category category);
+    void Update(Category category);
+    void Delete(int id);
 }
+

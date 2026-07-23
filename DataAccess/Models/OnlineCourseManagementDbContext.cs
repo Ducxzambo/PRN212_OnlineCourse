@@ -28,6 +28,8 @@ public partial class OnlineCourseManagementDbContext : DbContext
 
     public virtual DbSet<Lesson> Lessons { get; set; }
 
+    public virtual DbSet<LessonCompletion> LessonCompletions { get; set; }
+
     public virtual DbSet<Student> Students { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -38,18 +40,15 @@ public partial class OnlineCourseManagementDbContext : DbContext
         var configuration = builder.Build();
         optionsBuilder.UseSqlServer(configuration.GetConnectionString("Default"));
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Accounts__3214EC073AF36E5D");
+            entity.HasKey(e => e.Id).HasName("PK__Accounts__3214EC0755D61859");
 
             entity.HasIndex(e => e.Role, "IX_Accounts_Role");
 
             entity.HasIndex(e => e.Email, "UQ_Accounts_Email").IsUnique();
-
-            entity.HasIndex(e => e.Email, "UQ__Accounts__A9D105342526516C").IsUnique();
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("(sysdatetime())");
             entity.Property(e => e.Email).HasMaxLength(150);
@@ -62,14 +61,14 @@ public partial class OnlineCourseManagementDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Categori__3214EC074347D368");
+            entity.HasKey(e => e.Id).HasName("PK__Categori__3214EC074EB4F2A9");
 
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Course>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Courses__3214EC074696A1FB");
+            entity.HasKey(e => e.Id).HasName("PK__Courses__3214EC07DECF3C6D");
 
             entity.HasIndex(e => e.CategoryId, "IX_Courses_CategoryId");
 
@@ -93,7 +92,7 @@ public partial class OnlineCourseManagementDbContext : DbContext
 
         modelBuilder.Entity<Enrollment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Enrollme__3214EC073FA2545E");
+            entity.HasKey(e => e.Id).HasName("PK__Enrollme__3214EC072F0C8069");
 
             entity.HasIndex(e => e.CourseId, "IX_Enrollments_CourseId");
 
@@ -113,7 +112,7 @@ public partial class OnlineCourseManagementDbContext : DbContext
 
         modelBuilder.Entity<Instructor>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Instruct__3214EC070297D101");
+            entity.HasKey(e => e.Id).HasName("PK__Instruct__3214EC0760F5A184");
 
             entity.ToTable(tb => tb.HasTrigger("trg_Instructors_CheckRole"));
 
@@ -129,7 +128,7 @@ public partial class OnlineCourseManagementDbContext : DbContext
 
         modelBuilder.Entity<Lesson>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Lessons__3214EC07DF7DFF5C");
+            entity.HasKey(e => e.Id).HasName("PK__Lessons__3214EC07A60AC21D");
 
             entity.HasIndex(e => new { e.CourseId, e.OrderIndex }, "IX_Lessons_CourseId_OrderIndex");
 
@@ -141,9 +140,20 @@ public partial class OnlineCourseManagementDbContext : DbContext
                 .HasConstraintName("FK_Lessons_Courses");
         });
 
+        modelBuilder.Entity<LessonCompletion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.EnrollmentId, e.LessonId }).IsUnique();
+            entity.Property(e => e.CompletedDate).HasDefaultValueSql("(sysdatetime())");
+            entity.HasOne(e => e.Enrollment).WithMany().HasForeignKey(e => e.EnrollmentId).OnDelete(DeleteBehavior.Cascade);
+            // Courses already cascade to Enrollments; cascading through Lessons too creates
+            // multiple cascade paths in SQL Server.
+            entity.HasOne(e => e.Lesson).WithMany().HasForeignKey(e => e.LessonId).OnDelete(DeleteBehavior.NoAction);
+        });
+
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Students__3214EC073CAC2024");
+            entity.HasKey(e => e.Id).HasName("PK__Students__3214EC0703624516");
 
             entity.ToTable(tb => tb.HasTrigger("trg_Students_CheckRole"));
 

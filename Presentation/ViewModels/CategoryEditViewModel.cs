@@ -37,10 +37,10 @@ public class CategoryEditViewModel : ViewModelBase
             Name = category.Name;
         }
 
-        SaveCommand = new AsyncRelayCommand(SaveAsync);
+        SaveCommand = new RelayCommand(Save);
     }
 
-    private async Task SaveAsync()
+    private  void Save()
     {
         ErrorMessage = null;
 
@@ -51,8 +51,8 @@ public class CategoryEditViewModel : ViewModelBase
         };
 
         var (success, error) = IsEdit
-            ? await AppServices.CategoryService.UpdateCategoryAsync(category)
-            : await AppServices.CategoryService.CreateCategoryAsync(category);
+            ? AppServices.CategoryService.UpdateCategory(category)
+            : AppServices.CategoryService.CreateCategory(category);
 
         if (!success)
         {
@@ -63,3 +63,4 @@ public class CategoryEditViewModel : ViewModelBase
         SaveSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }
+

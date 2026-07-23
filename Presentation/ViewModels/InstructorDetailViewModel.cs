@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using DataAccess.Models;
 using Presentation.Helpers;
 
@@ -12,13 +12,14 @@ public class InstructorDetailViewModel : ViewModelBase
     public InstructorDetailViewModel(Instructor instructor)
     {
         Instructor = instructor;
-        _ = LoadAsync();
+        Load();
     }
 
-    private async Task LoadAsync()
+    private  void Load()
     {
-        var courses = await AppServices.CourseService.GetCoursesByInstructorAsync(Instructor.Id);
+        var courses = AppServices.CourseService.GetCoursesByInstructor(Instructor.Id);
         Courses.Clear();
         foreach (var course in courses) Courses.Add(course);
     }
 }
+

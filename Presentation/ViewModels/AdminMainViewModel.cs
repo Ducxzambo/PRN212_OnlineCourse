@@ -1,4 +1,4 @@
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Presentation.Helpers;
 
 namespace Presentation.ViewModels;
@@ -40,9 +40,9 @@ public class AdminMainViewModel : ViewModelBase
 
         CurrentViewModel = _dashboardViewModel;
 
-        _ = _dashboardViewModel.LoadAsync();
-        _ = _categoryListViewModel.LoadAsync();
-        _ = _accountListViewModel.LoadAsync();
+        _dashboardViewModel.Load();
+        _categoryListViewModel.Load();
+        _accountListViewModel.Load();
     }
 
     private void Logout()
@@ -51,3 +51,4 @@ public class AdminMainViewModel : ViewModelBase
         LogoutRequested?.Invoke(this, EventArgs.Empty);
     }
 }
+

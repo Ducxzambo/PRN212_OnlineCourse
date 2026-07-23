@@ -1,8 +1,9 @@
-<UserControl x:Class="Presentation.Views.CategoryListView"
+﻿<UserControl x:Class="Presentation.Views.CategoryListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -52,7 +53,7 @@
             <Run Text="{Binding SelectedCategory.Name, StringFormat=' \u201c{0}\u201d', Mode=OneWay}" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold"/>
         </TextBlock>
 
-        <DataGrid Grid.Row="5" ItemsSource="{Binding CoursesInCategory}" MinHeight="140" MaxHeight="320">
+        <DataGrid Grid.Row="5" ItemsSource="{Binding CoursesInCategory}" SelectedItem="{Binding SelectedCourseInCategory}" MinHeight="140" MaxHeight="260">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Tên khóa học" Binding="{Binding Title}" Width="2*"/>
                 <DataGridTextColumn Header="Giảng viên" Binding="{Binding Instructor.FullName}" Width="1.4*"/>
@@ -61,5 +62,21 @@
                 <DataGridTextColumn Header="Học viên" Binding="{Binding Enrollments.Count}" Width="80"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <StackPanel Grid.Row="6" Margin="0,20,0,0">
+            <TextBlock Margin="0,0,0,8">
+                <Run Text="Bài học của khóa học" FontWeight="SemiBold"/>
+                <Run Text="{Binding SelectedCourseInCategory.Title, StringFormat=' “{0}”', Mode=OneWay}" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold"/>
+            </TextBlock>
+            <DataGrid ItemsSource="{Binding LessonsInSelectedCourse}" MinHeight="120" MaxHeight="260">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding OrderIndex}" Width="45"/>
+                    <DataGridTextColumn Header="Tên bài học" Binding="{Binding Title}" Width="2*"/>
+                    <DataGridTextColumn Header="Nội dung" Binding="{Binding Content}" Width="2*"/>
+                    <DataGridTextColumn Header="Video" Binding="{Binding VideoUrl}" Width="2*"/>
+                    <DataGridTextColumn Header="Phút" Binding="{Binding DurationMinutes}" Width="60"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
     </Grid>
 </UserControl>
