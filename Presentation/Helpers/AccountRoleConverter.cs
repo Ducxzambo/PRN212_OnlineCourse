@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace Presentation.Helpers;
@@ -25,3 +25,4 @@ public class AccountRoleConverter : IValueConverter
         throw new NotSupportedException();
     }
 }
+

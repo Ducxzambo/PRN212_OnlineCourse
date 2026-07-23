@@ -23,3 +23,4 @@ public class CourseFilterOption
     public int? CourseId { get; init; }
     public string DisplayName { get; init; } = "";
 }
+

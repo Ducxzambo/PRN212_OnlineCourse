@@ -64,10 +64,10 @@ public class LessonEditViewModel : ViewModelBase
             DurationMinutes = lesson.DurationMinutes;
         }
 
-        SaveCommand = new AsyncRelayCommand(SaveAsync);
+        SaveCommand = new RelayCommand(Save);
     }
 
-    private async Task SaveAsync()
+    private  void Save()
     {
         ErrorMessage = null;
 
@@ -82,8 +82,8 @@ public class LessonEditViewModel : ViewModelBase
         };
 
         var (success, error) = IsEdit
-            ? await AppServices.LessonService.UpdateLessonAsync(lesson)
-            : await AppServices.LessonService.CreateLessonAsync(lesson);
+            ? AppServices.LessonService.UpdateLesson(lesson)
+            : AppServices.LessonService.CreateLesson(lesson);
 
         if (!success)
         {
@@ -94,3 +94,4 @@ public class LessonEditViewModel : ViewModelBase
         SaveSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }
+

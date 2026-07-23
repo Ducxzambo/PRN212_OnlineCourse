@@ -1,32 +1,21 @@
 using System.Windows;
-using Presentation.Helpers;
 using Presentation.ViewModels;
 
 namespace Presentation.Views;
 
 public partial class StudentMainWindow : Window
 {
-    private StudentMainViewModel _viewModel;
-
     public StudentMainWindow()
     {
         InitializeComponent();
-        _viewModel = new StudentMainViewModel();
-        DataContext = _viewModel;
-
-        _viewModel.LogoutRequested += (s, e) =>
+        var vm = new StudentMainViewModel();
+        vm.LogoutRequested += (_, _) => { new LoginWindow().Show(); Close(); };
+        vm.ProfileRequested += (_, _) =>
         {
-            StudentSession.Current = null;
-            StudentSession.CurrentAccount = null;
-            Close();
+            if (Presentation.Helpers.StudentSession.Current?.Account != null)
+                new ProfileWindow(new ProfileViewModel(Presentation.Helpers.StudentSession.Current.Account)).ShowDialog();
         };
+        DataContext = vm;
+        vm.Load();
     }
-
-    protected override async void OnContentRendered(EventArgs e)
-    {
-        base.OnContentRendered(e);
-        await _viewModel.LoadAsync();
-    }
-
- 
 }

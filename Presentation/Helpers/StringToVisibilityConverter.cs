@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
@@ -17,3 +17,4 @@ public class StringToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
     }
 }
+

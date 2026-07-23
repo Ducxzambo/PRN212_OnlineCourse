@@ -12,11 +12,13 @@ public class CategoryListViewModel : ViewModelBase
     private List<Category> _allCategories = new();
     private string _searchText = "";
     private Category? _selectedCategory;
+    private Course? _selectedCourseInCategory;
 
     public ObservableCollection<Category> Categories { get; } = new();
 
     /// <summary>Courses belonging to the currently selected category - shown in the grid below.</summary>
     public ObservableCollection<Course> CoursesInCategory { get; } = new();
+    public ObservableCollection<Lesson> LessonsInSelectedCourse { get; } = new();
 
     public string SearchText
     {
@@ -30,7 +32,17 @@ public class CategoryListViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _selectedCategory, value))
-                _ = LoadCoursesInCategoryAsync();
+                LoadCoursesInCategory();
+        }
+    }
+
+    public Course? SelectedCourseInCategory
+    {
+        get => _selectedCourseInCategory;
+        set
+        {
+            if (SetProperty(ref _selectedCourseInCategory, value))
+                LoadLessonsInSelectedCourse();
         }
     }
 
@@ -43,15 +55,15 @@ public class CategoryListViewModel : ViewModelBase
     {
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, () => SelectedCategory != null);
-        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => SelectedCategory != null);
-        RefreshCommand = new AsyncRelayCommand(LoadAsync);
+        DeleteCommand = new RelayCommand(Delete, () => SelectedCategory != null);
+        RefreshCommand = new RelayCommand(Load);
     }
 
-    public async Task LoadAsync()
+    public  void Load()
     {
         var previousSelectedId = SelectedCategory?.Id;
 
-        _allCategories = await AppServices.CategoryService.GetAllAsync();
+        _allCategories = AppServices.CategoryService.GetAll();
         ApplyFilter();
 
         if (previousSelectedId.HasValue)
@@ -68,19 +80,31 @@ public class CategoryListViewModel : ViewModelBase
         foreach (var category in filtered) Categories.Add(category);
     }
 
-    private async Task LoadCoursesInCategoryAsync()
+    private  void LoadCoursesInCategory()
     {
         CoursesInCategory.Clear();
+        LessonsInSelectedCourse.Clear();
+        SelectedCourseInCategory = null;
         if (SelectedCategory == null) return;
 
-        var courses = await AppServices.CourseService.GetCoursesByCategoryAsync(SelectedCategory.Id);
+        var courses = AppServices.CourseService.GetCoursesByCategory(SelectedCategory.Id);
         foreach (var course in courses) CoursesInCategory.Add(course);
+        SelectedCourseInCategory = CoursesInCategory.FirstOrDefault();
+    }
+
+    private void LoadLessonsInSelectedCourse()
+    {
+        LessonsInSelectedCourse.Clear();
+        if (SelectedCourseInCategory == null) return;
+
+        foreach (var lesson in AppServices.LessonService.GetLessonsByCourse(SelectedCourseInCategory.Id))
+            LessonsInSelectedCourse.Add(lesson);
     }
 
     private void Add()
     {
         var window = new CategoryEditWindow(new CategoryEditViewModel(null));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
     private void Edit()
@@ -88,10 +112,10 @@ public class CategoryListViewModel : ViewModelBase
         if (SelectedCategory == null) return;
 
         var window = new CategoryEditWindow(new CategoryEditViewModel(SelectedCategory));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
-    private async Task DeleteAsync()
+    private  void Delete()
     {
         if (SelectedCategory == null) return;
 
@@ -100,13 +124,14 @@ public class CategoryListViewModel : ViewModelBase
             MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (confirm != MessageBoxResult.Yes) return;
 
-        var (success, error) = await AppServices.CategoryService.DeleteCategoryAsync(SelectedCategory.Id);
+        var (success, error) = AppServices.CategoryService.DeleteCategory(SelectedCategory.Id);
         if (!success)
         {
             MessageBox.Show(error, "Không thể xóa", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        await LoadAsync();
+        Load();
     }
 }
+

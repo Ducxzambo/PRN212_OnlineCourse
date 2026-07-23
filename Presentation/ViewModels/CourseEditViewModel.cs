@@ -73,13 +73,13 @@ public class CourseEditViewModel : ViewModelBase
             DurationHours = course.DurationHours;
         }
 
-        SaveCommand = new AsyncRelayCommand(SaveAsync);
-        _ = LoadCategoriesAsync(course?.CategoryId);
+        SaveCommand = new RelayCommand(Save);
+        LoadCategories(course?.CategoryId);
     }
 
-    private async Task LoadCategoriesAsync(int? currentCategoryId)
+    private  void LoadCategories(int? currentCategoryId)
     {
-        var categories = await AppServices.CourseService.GetCategoriesAsync();
+        var categories = AppServices.CourseService.GetCategories();
         Categories.Clear();
         foreach (var category in categories) Categories.Add(category);
 
@@ -87,7 +87,7 @@ public class CourseEditViewModel : ViewModelBase
             SelectedCategory = Categories.FirstOrDefault(c => c.Id == currentCategoryId.Value);
     }
 
-    private async Task SaveAsync()
+    private  void Save()
     {
         ErrorMessage = null;
 
@@ -111,8 +111,8 @@ public class CourseEditViewModel : ViewModelBase
         };
 
         var (success, error) = IsEdit
-            ? await AppServices.CourseService.UpdateCourseAsync(course)
-            : await AppServices.CourseService.CreateCourseAsync(course);
+            ? AppServices.CourseService.UpdateCourse(course)
+            : AppServices.CourseService.CreateCourse(course);
 
         if (!success)
         {
@@ -123,3 +123,4 @@ public class CourseEditViewModel : ViewModelBase
         SaveSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }
+

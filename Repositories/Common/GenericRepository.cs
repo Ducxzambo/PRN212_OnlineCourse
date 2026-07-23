@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,46 +11,47 @@ namespace Repositories.Common;
 /// </summary>
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    public async Task<List<T>> GetAllAsync()
+    public  List<T> GetAll()
     {
         using var context = new OnlineCourseManagementDbContext();
-        return await context.Set<T>().AsNoTracking().ToListAsync();
+        return context.Set<T>().AsNoTracking().ToList();
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public  T? GetById(int id)
     {
         using var context = new OnlineCourseManagementDbContext();
-        return await context.Set<T>().FindAsync(id);
+        return context.Set<T>().Find(id);
     }
 
-    public async Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate)
+    public List<T> Find(Expression<Func<T, bool>> predicate)
     {
         using var context = new OnlineCourseManagementDbContext();
-        return await context.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
+        return context.Set<T>().AsNoTracking().Where(predicate).ToList();
     }
 
-    public async Task AddAsync(T entity)
+    public  void Add(T entity)
     {
         using var context = new OnlineCourseManagementDbContext();
         context.Set<T>().Add(entity);
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
-    public async Task UpdateAsync(T entity)
+    public  void Update(T entity)
     {
         using var context = new OnlineCourseManagementDbContext();
         context.Set<T>().Update(entity);
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 
-    public async Task DeleteAsync(int id)
+    public  void Delete(int id)
     {
         using var context = new OnlineCourseManagementDbContext();
-        var entity = await context.Set<T>().FindAsync(id);
+        var entity = context.Set<T>().Find(id);
         if (entity != null)
         {
             context.Set<T>().Remove(entity);
-            await context.SaveChangesAsync();
+            context.SaveChanges();
         }
     }
 }
+

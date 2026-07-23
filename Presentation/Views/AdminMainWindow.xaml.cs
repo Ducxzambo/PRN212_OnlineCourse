@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using Presentation.ViewModels;
 
 namespace Presentation.Views
@@ -21,3 +21,4 @@ namespace Presentation.Views
         }
     }
 }
+

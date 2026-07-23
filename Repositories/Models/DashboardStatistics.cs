@@ -1,4 +1,4 @@
-namespace Repositories.Models;
+﻿namespace Repositories.Models;
 
 public class DashboardStatistics
 {
@@ -30,3 +30,4 @@ public class TopCourseStat
     public string InstructorName { get; set; } = "";
     public int EnrollmentCount { get; set; }
 }
+

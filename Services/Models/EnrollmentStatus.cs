@@ -1,4 +1,4 @@
-namespace Services.Models;
+﻿namespace Services.Models;
 
 /// <summary>Mirrors the int Status column on dbo.Enrollments.</summary>
 public enum EnrollmentStatus
@@ -8,3 +8,4 @@ public enum EnrollmentStatus
     Completed = 2,
     Cancelled = 3
 }
+

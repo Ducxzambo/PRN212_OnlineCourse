@@ -4,6 +4,7 @@ using Presentation.Helpers;
 
 namespace Presentation.ViewModels;
 
+/// <summary>Read-only course enrollment history for a student.</summary>
 public class StudentDetailViewModel : ViewModelBase
 {
     public Student Student { get; }
@@ -12,13 +13,12 @@ public class StudentDetailViewModel : ViewModelBase
     public StudentDetailViewModel(Student student)
     {
         Student = student;
-        _ = LoadAsync();
+        Load();
     }
 
-    private async Task LoadAsync()
+    private void Load()
     {
-        var history = await AppServices.StudentService.GetEnrollmentHistoryAsync(Student.Id);
-        History.Clear();
-        foreach (var enrollment in history) History.Add(enrollment);
+        foreach (var enrollment in AppServices.StudentService.GetEnrollmentHistory(Student.Id))
+            History.Add(enrollment);
     }
 }

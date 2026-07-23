@@ -1,13 +1,14 @@
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Repositories;
 
 public interface IAccountRepository
 {
-    Task<List<Account>> GetAllAsync();
-    Task<Account?> GetByIdAsync(int id);
-    Task<Account?> GetByEmailAsync(string email);
-    Task AddAsync(Account account);
-    Task UpdateAsync(Account account);
-    Task DeleteAsync(int id);
+    List<Account> GetAll();
+    Account? GetById(int id);
+    Account? GetByEmail(string email);
+    void Add(Account account);
+    void Update(Account account);
+    void Delete(int id);
 }
+

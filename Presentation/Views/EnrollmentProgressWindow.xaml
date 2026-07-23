@@ -1,0 +1,34 @@
+<Window x:Class="Presentation.Views.EnrollmentProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tiến độ bài học" Height="520" Width="800"
+        MinHeight="360" MinWidth="600"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="24">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,8">
+            <TextBlock Text="{Binding Student.FullName}" Style="{StaticResource HeadingText}"/>
+            <TextBlock Text="{Binding Course.Title, Mode=OneWay}" Style="{StaticResource SubHeadingText}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="180"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock Text="Tiến độ:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0"/>
+            <Grid Grid.Column="1" Margin="0,0,16,0"><ProgressBar Value="{Binding Enrollment.Progress}" Maximum="100" Height="18"/><TextBlock Text="{Binding Enrollment.Progress, StringFormat={}{0:N0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/></Grid>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center"><Run Text="Trạng thái: " FontWeight="SemiBold"/><Run Text="{Binding Enrollment.Status, Mode=OneWay, Converter={StaticResource EnrollmentStatusConverter}}"/></TextBlock>
+        </Grid>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Lessons}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding Lesson.OrderIndex}" Width="45"/>
+                <DataGridTextColumn Header="Tên bài học" Binding="{Binding Lesson.Title}" Width="2*"/>
+                <DataGridTextColumn Header="Nội dung" Binding="{Binding Lesson.Content}" Width="2*"/>
+                <DataGridTextColumn Header="Video" Binding="{Binding Lesson.VideoUrl}" Width="2*"/>
+                <DataGridTextColumn Header="Trạng thái" Binding="{Binding CompletionStatus}" Width="140"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0"><Button Content="Đóng" IsCancel="True"/></StackPanel>
+    </Grid>
+</Window>
