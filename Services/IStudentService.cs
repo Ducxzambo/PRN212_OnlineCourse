@@ -1,30 +1,25 @@
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Services;
 
 public interface IStudentService
 {
     /// <summary>Roster of every enrollment across all courses taught by this instructor.</summary>
-    Task<List<Enrollment>> GetRosterByInstructorAsync(int instructorId);
+    List<Enrollment> GetRosterByInstructor(int instructorId);
 
     /// <summary>Full cross-course enrollment history for one student.</summary>
-    Task<List<Enrollment>> GetEnrollmentHistoryAsync(int studentId);
+    List<Enrollment> GetEnrollmentHistory(int studentId);
 
-    Task<(bool Success, string? Error)> UpdateEnrollmentStatusAsync(int enrollmentId, int newStatus);
-    Task<(bool Success, string? Error)> RemoveEnrollmentAsync(int enrollmentId);
+    (bool Success, string? Error) UpdateEnrollmentStatus(int enrollmentId, int newStatus);
+    (bool Success, string? Error) RemoveEnrollment(int enrollmentId);
 
     /// <summary>Enrolls a student (creating the Student record if the email isn't known yet) into a course.</summary>
-    Task<(bool Success, string? Error)> EnrollStudentAsync(int courseId, string fullName, string email, string? phone);
+    (bool Success, string? Error) EnrollStudent(int courseId, string fullName, string email, string? phone);
 
     /// <summary>Enrolls an already-known student (by Id) into a course - used by the recommendation screen.</summary>
-    Task<(bool Success, string? Error)> EnrollExistingStudentAsync(int studentId, int courseId);
-
-    /// <summary>Get lessons for a course that the student is enrolled in.</summary>
-    Task<List<Lesson>> GetLessonsByCourseAsync(int courseId);
-
-    /// <summary>Get an individual lesson by Id.</summary>
-    Task<Lesson?> GetLessonByIdAsync(int lessonId);
-
-    /// <summary>Update progress for a student's enrollment.</summary>
-    Task<(bool Success, string? Error)> UpdateEnrollmentProgressAsync(int enrollmentId, decimal progress);
+    (bool Success, string? Error) EnrollExistingStudent(int studentId, int courseId);
+    (bool Success, string? Error) CompleteLesson(int enrollmentId, int lessonId);
+    (bool Success, string? Error) SetLessonCompletion(int enrollmentId, int lessonId, bool isCompleted);
+    List<int> GetCompletedLessonIds(int enrollmentId);
 }
+

@@ -1,4 +1,4 @@
-<Window x:Class="Presentation.Views.InstructorDetailWindow"
+﻿<Window x:Class="Presentation.Views.InstructorDetailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Thông tin Instructor" Height="480" Width="620"

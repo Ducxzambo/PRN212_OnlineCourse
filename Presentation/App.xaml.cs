@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using Presentation.Views;
 
 namespace Presentation
@@ -17,3 +17,4 @@ namespace Presentation
         }
     }
 }
+

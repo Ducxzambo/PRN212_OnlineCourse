@@ -1,4 +1,6 @@
-using Repositories;
+﻿using Repositories;
+using Repositories.Impl;
+using Services.Impl;
 using Services;
 
 namespace Presentation.Helpers;
@@ -19,13 +21,7 @@ public static class AppServices
         new LessonService(new LessonRepository());
 
     public static IStudentService StudentService { get; } =
-        new StudentService(new EnrollmentRepository(), new StudentRepository(), new LessonRepository());
-
-    public static IStudentRepository StudentRepository { get; } =
-        new StudentRepository();
-
-    public static IRecommendationService RecommendationService { get; } =
-        new RecommendationService(new CourseRepository(), new EnrollmentRepository());
+        new StudentService(new EnrollmentRepository(), new StudentRepository());
 
     public static IAccountService AccountService { get; } =
         new AccountService(new AccountRepository(), new InstructorRepository(), new StudentRepository());

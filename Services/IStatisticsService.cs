@@ -1,8 +1,9 @@
-using Repositories.Models;
+﻿using Repositories.Models;
 
 namespace Services;
 
 public interface IStatisticsService
 {
-    Task<DashboardStatistics> GetDashboardStatisticsAsync();
+    DashboardStatistics GetDashboardStatistics();
 }
+

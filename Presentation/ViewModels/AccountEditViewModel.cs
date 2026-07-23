@@ -98,16 +98,16 @@ public class AccountEditViewModel : ViewModelBase
             _role = (AccountRole)account.Role;
         }
 
-        SaveCommand = new AsyncRelayCommand(SaveAsync);
+        SaveCommand = new RelayCommand(Save);
     }
 
-    private async Task SaveAsync()
+    private  void Save()
     {
         ErrorMessage = null;
 
         var (success, error) = IsEdit
-            ? await AppServices.AccountService.UpdateAccountAsync(_accountId!.Value, FullName, Email, Phone, IsActive)
-            : await AppServices.AccountService.CreateAccountAsync(FullName, Email, Phone, Role);
+            ? AppServices.AccountService.UpdateAccount(_accountId!.Value, FullName, Email, Phone, IsActive)
+            : AppServices.AccountService.CreateAccount(FullName, Email, Phone, Role);
 
         if (!success)
         {
@@ -118,3 +118,4 @@ public class AccountEditViewModel : ViewModelBase
         SaveSucceeded?.Invoke(this, EventArgs.Empty);
     }
 }
+

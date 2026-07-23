@@ -1,13 +1,14 @@
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Services;
 
 public interface ILessonService
 {
-    Task<List<Lesson>> GetLessonsByCourseAsync(int courseId);
-    Task<(bool Success, string? Error)> CreateLessonAsync(Lesson lesson);
-    Task<(bool Success, string? Error)> UpdateLessonAsync(Lesson lesson);
-    Task<(bool Success, string? Error)> DeleteLessonAsync(int lessonId);
-    Task MoveLessonUpAsync(int lessonId, int courseId);
-    Task MoveLessonDownAsync(int lessonId, int courseId);
+    List<Lesson> GetLessonsByCourse(int courseId);
+    (bool Success, string? Error) CreateLesson(Lesson lesson);
+    (bool Success, string? Error) UpdateLesson(Lesson lesson);
+    (bool Success, string? Error) DeleteLesson(int lessonId);
+    void MoveLessonUp(int lessonId, int courseId);
+    void MoveLessonDown(int lessonId, int courseId);
 }
+

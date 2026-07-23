@@ -40,18 +40,18 @@ public class CourseListViewModel : ViewModelBase
 
         AddCommand = new RelayCommand(Add);
         EditCommand = new RelayCommand(Edit, () => SelectedCourse != null);
-        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => SelectedCourse != null);
+        DeleteCommand = new RelayCommand(Delete, () => SelectedCourse != null);
         ManageLessonsCommand = new RelayCommand(ManageLessons, () => SelectedCourse != null);
-        RefreshCommand = new AsyncRelayCommand(LoadAsync);
+        RefreshCommand = new RelayCommand(Load);
     }
 
-    public async Task LoadAsync()
+    public  void Load()
     {
         if (InstructorSession.Current == null) return;
 
         var previousSelectedId = SelectedCourse?.Id;
 
-        _allCourses = await AppServices.CourseService.GetCoursesByInstructorAsync(InstructorSession.Current.Id);
+        _allCourses = AppServices.CourseService.GetCoursesByInstructor(InstructorSession.Current.Id);
         ApplyFilter();
 
         if (previousSelectedId.HasValue)
@@ -74,7 +74,7 @@ public class CourseListViewModel : ViewModelBase
     private void Add()
     {
         var window = new CourseEditWindow(new CourseEditViewModel(null));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
     private void Edit()
@@ -82,10 +82,10 @@ public class CourseListViewModel : ViewModelBase
         if (SelectedCourse == null) return;
 
         var window = new CourseEditWindow(new CourseEditViewModel(SelectedCourse));
-        if (window.ShowDialog() == true) _ = LoadAsync();
+        if (window.ShowDialog() == true) Load();
     }
 
-    private async Task DeleteAsync()
+    private  void Delete()
     {
         if (SelectedCourse == null) return;
 
@@ -94,14 +94,14 @@ public class CourseListViewModel : ViewModelBase
             "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (confirm != MessageBoxResult.Yes) return;
 
-        var (success, error) = await AppServices.CourseService.DeleteCourseAsync(SelectedCourse.Id);
+        var (success, error) = AppServices.CourseService.DeleteCourse(SelectedCourse.Id);
         if (!success)
         {
             MessageBox.Show(error, "Không thể xóa", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        await LoadAsync();
+        Load();
     }
 
     private void ManageLessons()
@@ -109,3 +109,4 @@ public class CourseListViewModel : ViewModelBase
         if (SelectedCourse != null) _onManageLessons(SelectedCourse);
     }
 }
+

@@ -1,47 +1,20 @@
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 using Presentation.ViewModels;
 
-namespace Presentation.Views
+namespace Presentation.Views;
+public partial class LoginWindow : Window
 {
-    public partial class LoginWindow : Window
+    public LoginWindow()
     {
-        public LoginWindow()
-        {
-            InitializeComponent();
-
-            var viewModel = new LoginViewModel();
-
-            viewModel.InstructorLoginSucceeded += (s, e) =>
-            {
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-                Close();
-            };
-
-            viewModel.AdminLoginSucceeded += (s, e) =>
-            {
-                var adminWindow = new AdminMainWindow();
-                adminWindow.Show();
-                Close();
-            };
-
-            viewModel.StudentLoginSucceeded += (s, e) =>
-            {
-                var studentWindow = new StudentMainWindow();
-                studentWindow.Show();
-                Close();
-            };
-
-            DataContext = viewModel;
-
-            // Bind PasswordBox to ViewModel (PasswordBox doesn't support direct binding for security reasons)
-            PasswordBox.PasswordChanged += (s, e) =>
-            {
-                if (viewModel != null)
-                {
-                    viewModel.Password = PasswordBox.Password;
-                }
-            };
-        }
+        InitializeComponent();
+        var vm = new LoginViewModel();
+        vm.InstructorLoginSucceeded += (_, _) => { new MainWindow().Show(); Close(); };
+        vm.AdminLoginSucceeded += (_, _) => { new AdminMainWindow().Show(); Close(); };
+        vm.StudentLoginSucceeded += (_, _) => { new StudentMainWindow().Show(); Close(); };
+        DataContext = vm;
     }
+    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) { if (DataContext is LoginViewModel vm) vm.Password = ((PasswordBox)sender).Password; }
+    private void RegisterStudent_Click(object sender, RoutedEventArgs e) => new StudentRegisterWindow().ShowDialog();
 }
+
